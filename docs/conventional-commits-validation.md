@@ -26,14 +26,13 @@ jobs:
   validate:
     name: Validar Formato de Commits
     if: github.event.pull_request.draft == false
-    uses: usuario/workflows/.github/workflows/conventional-commits-validation.yml@main
+    uses: jrgil20/workflows/.github/workflows/conventional-commits-validation.yml@main
     with:
       language: "es"  # Opciones: "es" o "en" (predeterminado: "en")
       # target-branch: "main"  # Opcional: rama objetivo personalizada
     secrets: inherit
 ```
 
-2. Reemplaza `usuario/workflows` con el nombre de usuario u organización y repositorio donde has almacenado este workflow reutilizable.
 
 ## Parámetros disponibles
 
