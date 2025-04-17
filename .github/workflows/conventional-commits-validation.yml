@@ -1,0 +1,61 @@
+name: Validación de Conventional Commits
+
+on:
+  workflow_call:
+    inputs:
+      language:
+        description: 'Idioma para los mensajes de commit (es/en)'
+        required: false
+        default: 'en'
+        type: string
+      target-branch:
+        description: 'Rama objetivo para validar los commits'
+        required: false
+        default: ''
+        type: string
+
+jobs:
+  validate-commits:
+    name: Validar Conventional Commits
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout código
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+
+      - name: Configurar target branch
+        run: |
+          if [ -n "${{ inputs.target-branch }}" ]; then
+            echo "TARGET_BRANCH=${{ inputs.target-branch }}" >> $GITHUB_ENV
+          else
+            echo "TARGET_BRANCH=${{ github.event.repository.default_branch }}" >> $GITHUB_ENV
+          fi
+
+      - name: Validar Conventional Commits
+        uses: amannn/action-semantic-pull-request@v5
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          types: |
+            feat
+            fix
+            docs
+            style
+            refactor
+            perf
+            test
+            build
+            ci
+            chore
+            revert
+          requireScope: false
+          validateSingleCommit: true
+          validateSingleCommitMatchesPrTitle: true
+          # Permitir mensajes en español e inglés
+          subjectPattern: ^(?![A-Z]).+$
+          subjectPatternError: |
+            El primer caracter del mensaje debe estar en minúscula.
+            The first character of the subject must be lowercase.
+          wip: true
+          validateFormat: true
